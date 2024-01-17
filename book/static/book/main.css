@@ -85,4 +85,8 @@ body {
 
   .custom-bg-color {
     background-color: #4267B2; 
-}
+  }
+
+  .custom-left {
+    margin-left: auto;
+  }
