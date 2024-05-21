@@ -35,11 +35,7 @@
                   <div class="navbar-nav">
                     {% if user.is_authenticated %}
                         <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">
-                                <img src="{{ user.profile.image.url }}" class="rounded-circle" alt="Profile" style="width: 30px; height: 30px;">
-                            </a>
-                        </li>                        
+                        <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                         <form id="logoutForm" method="post" action="{% url 'logout' %}">
                             {% csrf_token %}
                         </form>
