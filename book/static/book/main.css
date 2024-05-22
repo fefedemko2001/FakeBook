@@ -90,3 +90,12 @@ a.article-title:hover {
 .custom-left {
   margin-left: auto;
 }
+
+.nav-item .bi {
+  color: white; /* Ikonok színének beállítása */
+  font-size: 1.25rem; /* Ikonok méretének beállítása */
+}
+
+.nav-item img {
+  vertical-align: middle; /* Profilkép függőleges középhez igazítása */
+}

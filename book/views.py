@@ -18,7 +18,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
             Image.objects.create(post=self.object, image=file)
         return redirect(self.get_success_url())
 
-ImageFormSet = inlineformset_factory(Post, Image, fields=['image', 'description'], extra=3)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_update'] = False
+        return context
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
@@ -28,8 +31,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         self.object = form.save()
-        for file in self.request.FILES.getlist('file'):
-            Image.objects.create(post=self.object, image=file)
         return redirect(self.get_success_url())
 
     def test_func(self):
@@ -37,6 +38,12 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == post.author:
             return True
         return False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_update'] = True
+        return context
+
 
 class PostListView(ListView):
     model = Post
