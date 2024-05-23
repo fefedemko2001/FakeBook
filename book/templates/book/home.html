@@ -1,4 +1,5 @@
 {% extends "book/base.html" %}
+{% load static %}
 {% block content %}
    {% for post in posts %}
       <article class="media content-section">
@@ -20,5 +21,54 @@
             </div>
          </div>
       </article>
+      <div class="interaction">
+         <button class="btn btn-outline-primary like-button" data-post-id="{{ post.pk }}">
+             Like ({{ post.total_likes }})
+         </button>
+         <button class="btn btn-outline-danger dislike-button" data-post-id="{{ post.pk }}">
+             Dislike ({{ post.total_dislikes }})
+         </button>
+     </div>
    {% endfor %}
 {% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    document.querySelectorAll('.like-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            var postId = event.target.getAttribute('data-post-id');
+            fetch("/post/" + postId + "/like/", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.like-button[data-post-id="' + postId + '"]').innerHTML = `Like (${data.likes})`;
+            });
+        });
+    });
+
+    document.querySelectorAll('.dislike-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            var postId = event.target.getAttribute('data-post-id');
+            fetch("/post/" + postId + "/dislike/", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.dislike-button[data-post-id="' + postId + '"]').innerHTML = `Dislike (${data.dislikes})`;
+            });
+        });
+    });
+</script>
+{% endblock extra_scripts %}
+

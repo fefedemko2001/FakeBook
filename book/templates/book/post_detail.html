@@ -1,28 +1,73 @@
 {% extends "book/base.html" %}
+{% load static %}
 {% block content %}
-    <article class="media content-section">
-        <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
-        <div class="media-body">
+   {% for post in posts %}
+      <article class="media content-section">
+         <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
-                <small class="text-muted">{{ object.date_posted|date:"Y. E d., G:i" }}</small>
-                {% if object.author == user %}
-                    <div>
-                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
-                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
-                    </div>
-                {% endif %}
+               <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+               <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
             </div>
-            <h2 class="article-title">{{ object.title }}</h2>
-            <p class="article-content">{{ object.content }}</p>
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
             <div class="post-images">
-                {% for image in object.post_images.all %}
-                    <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid">
-                    {% if image.description %}
-                        <p>{{ image.description }}</p>
-                    {% endif %}
-                {% endfor %}
+               {% for image in post.post_images.all %}
+                  <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid">
+                  {% if image.description %}
+                     <p>{{ image.description }}</p>
+                  {% endif %}
+               {% endfor %}
             </div>
-        </div>
-    </article>
+         </div>
+      </article>
+      <div class="interaction">
+         <button class="btn btn-outline-primary like-button" data-post-id="{{ post.pk }}">
+             Like ({{ post.total_likes }})
+         </button>
+         <button class="btn btn-outline-danger dislike-button" data-post-id="{{ post.pk }}">
+             Dislike ({{ post.total_dislikes }})
+         </button>
+     </div>
+   {% endfor %}
 {% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    document.querySelectorAll('.like-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            var postId = event.target.getAttribute('data-post-id');
+            fetch("/post/" + postId + "/like/", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.like-button[data-post-id="' + postId + '"]').innerHTML = `Like (${data.likes})`;
+            });
+        });
+    });
+
+    document.querySelectorAll('.dislike-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            var postId = event.target.getAttribute('data-post-id');
+            fetch("/post/" + postId + "/dislike/", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.dislike-button[data-post-id="' + postId + '"]').innerHTML = `Dislike (${data.dislikes})`;
+            });
+        });
+    });
+</script>
+{% endblock extra_scripts %}
