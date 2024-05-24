@@ -1,6 +1,8 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -84,3 +86,27 @@ def home(request):
 
 def about(request):
     return render(request, 'book/about.html', {'title': 'about'})
+
+@login_required
+@require_POST
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        if request.user in post.dislikes.all():
+            post.dislikes.remove(request.user)
+        post.likes.add(request.user)
+    return JsonResponse({'likes': post.total_likes(), 'dislikes': post.total_dislikes()})
+
+@login_required
+@require_POST
+def dislike_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.user in post.dislikes.all():
+        post.dislikes.remove(request.user)
+    else:
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        post.dislikes.add(request.user)
+    return JsonResponse({'likes': post.total_likes(), 'dislikes': post.total_dislikes()})
