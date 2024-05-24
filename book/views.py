@@ -31,6 +31,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         self.object = form.save()
+        # A képeket már elmentettük, így nincs szükség új mentésre
         return redirect(self.get_success_url())
 
     def test_func(self):
@@ -41,6 +42,8 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # A kapcsolódó képek hozzáadása a sablon kontextusához
+        context['images'] = self.object.post_images.all()
         context['is_update'] = True
         return context
 

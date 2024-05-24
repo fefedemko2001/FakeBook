@@ -17,6 +17,16 @@
             </div>
         </div>
         {% endif %}
+        {% if is_update %}
+          <div class="form-group">
+            <label for="images"></label>
+            <div>
+              {% for image in images %}
+                <img src="{{ image.image.url }}" alt="{{ image.description }}" style="max-width: 500px; max-height: 500px; margin-right: 10px;">
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
         <div>
             <button class="btn btn-outline-info" type="submit">
                 {% if is_update %}Update{% else %}Post{% endif %}
