@@ -23,6 +23,50 @@
                     {% endif %}
                 {% endfor %}
             </div>
+            <div>
+                <p>Likes: <span id="likes-{{ object.pk }}"> {{ object.total_likes }} </span></p>
+                <p>Dislikes: <span id="dislikes-{{ object.pk }}">{{ object.total_dislikes }}</span></p>
+                <button class="like-button btn btn-primary" data-post-id="{{ object.pk }}">Like</button>
+                <button class="dislike-button btn btn-danger" data-post-id="{{ object.pk }}">Dislike</button>
+            </div>
         </div>
     </article>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const postId = this.getAttribute('data-post-id');
+                    fetch(`/post/${postId}/like/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById(`likes-${postId}`).textContent = data.likes;
+                        document.getElementById(`dislikes-${postId}`).textContent = data.dislikes;
+                    });
+                });
+            });
+
+            document.querySelectorAll('.dislike-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const postId = this.getAttribute('data-post-id');
+                    fetch(`/post/${postId}/dislike/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById(`dislikes-${postId}`).textContent = data.dislikes;
+                        document.getElementById(`likes-${postId}`).textContent = data.likes;
+                    });
+                });
+            });
+        });
+    </script>
 {% endblock content %}
