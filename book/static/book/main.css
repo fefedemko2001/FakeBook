@@ -100,3 +100,38 @@ a.article-title:hover {
 .nav-item img {
   vertical-align: middle; /* Profilkép függőleges középhez igazítása */
 }
+
+.user-profile {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.article-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.reaction-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+/* styles.css vagy valahol a CSS fájlodban */
+.animation-container h1 {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animation-container.h1-show h1 {
+  opacity: 1;
+  transform: translateY(0);
+}

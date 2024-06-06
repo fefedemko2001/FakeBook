@@ -18,53 +18,19 @@
                   {% endif %}
                {% endfor %}
             </div>
-            <div>
-               <p>Likes: <span id="likes-{{ post.pk }}">{{ post.total_likes }}</span></p>
-               <p>Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></p>
-               <button class="like-button btn btn-primary" data-post-id="{{ post.pk }}">Like</button>
-               <button class="dislike-button btn btn-danger" data-post-id="{{ post.pk }}">Dislike</button>
-            </div>
+            <div class="reaction-buttons">
+               <button class="like-button btn btn-light" data-post-id="{{ post.pk }}">
+                   <i class="fa fa-thumbs-up"></i> Like
+               </button>
+               <button class="dislike-button btn btn-light" data-post-id="{{ post.pk }}">
+                   <i class="fa fa-thumbs-down"></i> Dislike
+               </button>
+               <p class="mt-2">
+                   <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
+                   <span class="text-danger">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
+               </p>
+           </div>
          </div>
       </article>
    {% endfor %}
-
-   <script>
-       document.addEventListener('DOMContentLoaded', function() {
-           document.querySelectorAll('.like-button').forEach(button => {
-               button.addEventListener('click', function() {
-                   const postId = this.getAttribute('data-post-id');
-                   fetch(`/post/${postId}/like/`, {
-                       method: 'POST',
-                       headers: {
-                           'X-CSRFToken': '{{ csrf_token }}',
-                           'Content-Type': 'application/json'
-                       }
-                   })
-                   .then(response => response.json())
-                   .then(data => {
-                       document.getElementById(`likes-${postId}`).innerText = data.likes;
-                       document.getElementById(`dislikes-${postId}`).innerText = data.dislikes;
-                   });
-               });
-           });
-
-           document.querySelectorAll('.dislike-button').forEach(button => {
-               button.addEventListener('click', function() {
-                   const postId = this.getAttribute('data-post-id');
-                   fetch(`/post/${postId}/dislike/`, {
-                       method: 'POST',
-                       headers: {
-                           'X-CSRFToken': '{{ csrf_token }}',
-                           'Content-Type': 'application/json'
-                       }
-                   })
-                   .then(response => response.json())
-                   .then(data => {
-                       document.getElementById(`likes-${postId}`).innerText = data.likes;
-                       document.getElementById(`dislikes-${postId}`).innerText = data.dislikes;
-                   });
-               });
-           });
-       });
-   </script>
 {% endblock content %}
