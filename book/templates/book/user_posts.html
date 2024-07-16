@@ -1,0 +1,47 @@
+{% extends "book/base.html" %}
+{% block content %}
+    <div class="user-profile text-center mb-4">
+        <img class="rounded-circle profile-img" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }} profile picture">
+        <h2>{{ user_profile.user.username }}</h2>
+        <p>Email: {{ user_profile.user.email }}</p>
+        <p>Age: {{ user_profile.age }}</p>
+        <p>Gender: {{ user_profile.gender }}</p>
+        <p>Location: {{ user_profile.location }}</p>
+    </div>
+    <hr>
+    {% for post in posts %}
+        <article class="media content-section">
+            <a href="{% url 'post-detail' post.id %}">
+                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+            </a>
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                    <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
+                </div>
+                <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                <p class="article-content">{{ post.content }}</p>
+                <div class="post-images">
+                    {% for image in post.post_images.all %}
+                        <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid">
+                        {% if image.description %}
+                            <p>{{ image.description }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="reaction-buttons">
+                    <button class="like-button btn btn-light" data-post-id="{{ post.pk }}">
+                        <i class="fa fa-thumbs-up"></i> Like
+                    </button>
+                    <button class="dislike-button btn btn-light" data-post-id="{{ post.pk }}">
+                        <i class="fa fa-thumbs-down"></i> Dislike
+                    </button>
+                    <p class="mt-2">
+                        <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
+                        <span class="text-danger">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
+                    </p>
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

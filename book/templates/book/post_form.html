@@ -1,0 +1,56 @@
+{% extends "book/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="content-section">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">
+                {% if is_update %}Update Post{% else %}Create Post{% endif %}
+            </legend>
+            {{ form|crispy }}
+        </fieldset>
+        {% if not is_update %}
+        <div class="dropzone" id="my-dropzone">
+            <div class="fallback">
+                <input type="file" name="file" multiple />
+            </div>
+        </div>
+        {% endif %}
+        {% if is_update %}
+          <div class="form-group">
+            <label for="images"></label>
+            <div>
+              {% for image in images %}
+                <img src="{{ image.image.url }}" alt="{{ image.description }}" style="max-width: 500px; max-height: 500px; margin-right: 10px;">
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        <div>
+            <button class="btn btn-outline-info" type="submit">
+                {% if is_update %}Update{% else %}Post{% endif %}
+            </button>
+        </div>
+    </form>
+  </div>
+{% endblock content %}
+
+{% block extra_scripts %}
+  {% if not is_update %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+  <script>
+    Dropzone.options.myDropzone = {
+      paramName: "file",
+      maxFilesize: 2, // MB
+      acceptedFiles: 'image/*',
+      init: function() {
+        this.on("success", function(file, response) {
+          console.log("File uploaded successfully");
+        });
+      }
+    };
+  </script>
+  {% endif %}
+{% endblock extra_scripts %}
