@@ -116,3 +116,4 @@ def dislike_post(request, pk):
             post.likes.remove(request.user)
         post.dislikes.add(request.user)
     return JsonResponse({'likes': post.total_likes(), 'dislikes': post.total_dislikes()})
+
