@@ -9,6 +9,23 @@
         <p>Location: {{ user_profile.location }}</p>
     </div>
     <hr>
+    {% if request.user == user_profile.user %}
+        <h3>Received Friend Requests</h3>
+        {% if received_requests %}
+            <ul>
+                {% for request in received_requests %}
+                    <li>
+                        {{ request.from_user.user.username }} 
+                        <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-success">Accept</a>
+                        <a href="{% url 'decline_friend_request' request.id %}" class="btn btn-danger">Decline</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No friend requests.</p>
+        {% endif %}
+    {% endif %}
+
     {% for post in posts %}
         <article class="media content-section">
             <a href="{% url 'post-detail' post.id %}">

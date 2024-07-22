@@ -11,6 +11,7 @@ from .views import (
 )
 from . import views
 
+
 urlpatterns = [
     path('', PostListView.as_view(), name = 'book-home'),
     path('user/<str:username>/', UserPostListView.as_view(), name = 'user-posts'),
