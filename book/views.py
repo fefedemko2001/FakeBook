@@ -7,6 +7,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .models import Post, Image
+from users.models import Profile, Friend_Request
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -68,6 +69,12 @@ class UserPostListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['user_profile'] = self.user.profile
+
+        if self.request.user.is_authenticated:
+            context['received_requests'] = Friend_Request.objects.filter(to_user=self.user.profile).all()
+        else:
+            context['received_requests'] = []
+
         return context
 
 
@@ -91,7 +98,21 @@ def home(request):
     return render(request, 'book/home.html', context)
 
 def about(request):
-    return render(request, 'book/about.html', {'title': 'about'})
+    if request.user.is_authenticated:
+        current_user_profile = Profile.objects.get(user=request.user)
+        current_user_friends = current_user_profile.friends.all()
+    else:
+        current_user_profile = None
+        current_user_friends = []
+
+    context = {
+        'allusers': Profile.objects.all(),
+        'title': 'about',
+        'current_user_profile': current_user_profile,
+        'current_user_friends': current_user_friends,
+    }
+    return render(request, 'book/about.html', context)
+
 
 @login_required
 @require_POST

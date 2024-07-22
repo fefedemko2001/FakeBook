@@ -1,7 +1,10 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .models import Profile, Friend_Request
+from book.urls import urlpatterns
 
 def register(request):
     if request.method == 'POST':
@@ -36,3 +39,50 @@ def profile(request):
     }
 
     return render(request, 'users/profile.html', context)
+
+@login_required
+def send_friend_request(request, userID):
+    from_user_profile = Profile.objects.get(user=request.user)
+    to_user_profile = Profile.objects.get(id=userID)
+    friend_request, created = Friend_Request.objects.get_or_create(
+        from_user=from_user_profile, to_user=to_user_profile)
+    if created:
+        messages.success(request, 'Friend request sent')
+    else:
+        messages.info(request, 'Friend request was already sent')
+    return redirect('book-home')
+
+@login_required
+def accept_friend_request(request, requestID):
+    try:
+        friend_request = Friend_Request.objects.get(id=requestID)
+    except Friend_Request.DoesNotExist:
+        messages.error(request, 'Friend request not found')
+        return redirect('user-posts', username=request.user.username)
+
+    if friend_request.to_user.user == request.user:
+        friend_request.to_user.friends.add(friend_request.from_user)
+        friend_request.from_user.friends.add(friend_request.to_user)
+        friend_request.delete()
+        messages.success(request, 'Friend request accepted')
+    else:
+        messages.error(request, 'Friend request not accepted')
+    
+    return redirect('user-posts', username=request.user.username)
+
+@login_required
+def decline_friend_request(request, requestID):
+    try:
+        friend_request = Friend_Request.objects.get(id=requestID)
+    except Friend_Request.DoesNotExist:
+        messages.error(request, 'Friend request not found')
+        return redirect('user-posts', username=request.user.username)
+
+    if friend_request.to_user.user == request.user:
+        friend_request.delete()
+        messages.success(request, 'Friend request declined')
+    else:
+        messages.error(request, 'Friend request not declined')
+    
+    return redirect('user-posts', username=request.user.username)
+
