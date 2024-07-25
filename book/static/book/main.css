@@ -2,7 +2,6 @@ body {
   background: #fafafa;
   color: #333333;
   margin: 0; 
-  padding-top: 65px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -93,18 +92,53 @@ a.article-title:hover {
 }
 
 .nav-item .bi {
-  color: white; /* Ikonok színének beállítása */
-  font-size: 1.25rem; /* Ikonok méretének beállítása */
+  color: white; 
+  font-size: 1.25rem; 
 }
 
 .nav-item img {
-  vertical-align: middle; /* Profilkép függőleges középhez igazítása */
+  vertical-align: middle; 
 }
 
 .user-profile {
   text-align: center;
   margin-bottom: 20px;
 }
+
+.user-details {
+  background-color: #f8f9fa;
+}
+
+.user-details h4 {
+  margin-bottom: 15px;
+}
+
+.user-details .row {
+  margin: 0;
+}
+
+.user-details .col-md-4 {
+  margin-bottom: 10px;
+}
+
+.user-details i {
+  margin-right: 5px;
+}
+
+
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.post-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 500px; 
+  margin: 0 auto; 
+}
+
 
 .profile-img {
   width: 150px;

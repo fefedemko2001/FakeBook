@@ -1,36 +1,45 @@
 {% extends "book/base.html" %}
+
 {% block content %}
-   {% for post in posts %}
-      <article class="media content-section">
-         <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-         <div class="media-body">
-            <div class="article-metadata">
-               <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-               <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
+   {% if user.is_authenticated %}
+      {% for post in posts %}
+         <article class="media content-section p-3 mb-3 border rounded shadow-sm">
+            <img class="rounded-circle article-img mr-3" src="{{ post.author.profile.image.url }}" alt="{{ post.author }}" width="65" height="65">
+            <div class="media-body">
+               <div class="article-metadata mb-2">
+                  <a class="mr-2 font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                  <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
+               </div>
+               <h2><a class="article-title text-primary" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+               <p class="article-content">{{ post.content }}</p>
+               <div class="post-images mb-2 text-center">
+                  {% for image in post.post_images.all %}
+                     <div class="mb-2">
+                        <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid rounded mb-1 post-image">
+                        {% if image.description %}
+                           <p class="text-muted">{{ image.description }}</p>
+                        {% endif %}
+                     </div>
+                  {% endfor %}
+               </div>
+               <div class="reaction-buttons">
+                  <button class="like-button btn btn-outline-primary btn-sm mr-2" data-post-id="{{ post.pk }}">
+                      <i class="fa fa-thumbs-up"></i> Like
+                  </button>
+                  <button class="dislike-button btn btn-outline-danger btn-sm" data-post-id="{{ post.pk }}">
+                      <i class="fa fa-thumbs-down"></i> Dislike
+                  </button>
+                  <p class="mt-2">
+                      <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
+                      <span class="text-danger ml-3">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
+                  </p>
+              </div>
             </div>
-            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
-            <div class="post-images">
-               {% for image in post.post_images.all %}
-                  <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid">
-                  {% if image.description %}
-                     <p>{{ image.description }}</p>
-                  {% endif %}
-               {% endfor %}
-            </div>
-            <div class="reaction-buttons">
-               <button class="like-button btn btn-light" data-post-id="{{ post.pk }}">
-                   <i class="fa fa-thumbs-up"></i> Like
-               </button>
-               <button class="dislike-button btn btn-light" data-post-id="{{ post.pk }}">
-                   <i class="fa fa-thumbs-down"></i> Dislike
-               </button>
-               <p class="mt-2">
-                   <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
-                   <span class="text-danger">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
-               </p>
-           </div>
-         </div>
-      </article>
-   {% endfor %}
+         </article>
+      {% endfor %}
+   {% else %}
+      <div class="alert alert-warning" role="alert">
+         <p class="mb-0">Please <a href="{% url 'login' %}" class="alert-link">log in</a> to view the posts.</p>
+      </div>
+   {% endif %}
 {% endblock content %}

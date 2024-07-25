@@ -1,44 +1,49 @@
 {% extends "book/base.html" %}
+
 {% block content %}
     <div class="user-profile text-center mb-4">
-        <img class="rounded-circle profile-img" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }} profile picture">
-        <h2>{{ user_profile.user.username }}</h2>
-        <p>Email: {{ user_profile.user.email }}</p>
-        <p>Age: {{ user_profile.age }}</p>
-        <p>Gender: {{ user_profile.gender }}</p>
-        <p>Location: {{ user_profile.location }}</p>
+        <img class="rounded-circle profile-img mb-3" src="{{ user_profile.image.url }}" alt="{{ object.author }}" width="150" height="150">
+        <h2 class="font-weight-bold">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h2>
+        <p>
+            <i class="fas fa-envelope"></i> Email: {{ user_profile.user.email }}<br>
+            <i class="fas fa-birthday-cake"></i> Age: {{ user_profile.age }}<br>
+            <i class="fas fa-venus-mars"></i> Gender: {{ user_profile.gender }}<br>
+            <i class="fas fa-map-marker-alt"></i> Location: {{ user_profile.location }}
+        </p>
     </div>
     <hr>
     {% for post in posts %}
-        <article class="media content-section">
+        <article class="media content-section p-3 mb-3 border rounded shadow-sm">
             <a href="{% url 'post-detail' post.id %}">
-                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+                <img class="rounded-circle article-img mr-3" src="{{ post.author.profile.image.url }}" alt="{{ post.author }}" width="65" height="65">
             </a>
             <div class="media-body">
-                <div class="article-metadata">
-                    <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                <div class="article-metadata mb-2">
+                    <a class="mr-2 font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
                 </div>
-                <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                <h2><a class="article-title text-primary" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <p class="article-content">{{ post.content }}</p>
-                <div class="post-images">
+                <div class="post-images mb-2 text-center">
                     {% for image in post.post_images.all %}
-                        <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid">
-                        {% if image.description %}
-                            <p>{{ image.description }}</p>
-                        {% endif %}
+                        <div class="mb-2">
+                            <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid rounded mb-1 post-image">
+                            {% if image.description %}
+                                <p class="text-muted">{{ image.description }}</p>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
                 <div class="reaction-buttons">
-                    <button class="like-button btn btn-light" data-post-id="{{ post.pk }}">
+                    <button class="like-button btn btn-outline-primary btn-sm mr-2" data-post-id="{{ post.pk }}">
                         <i class="fa fa-thumbs-up"></i> Like
                     </button>
-                    <button class="dislike-button btn btn-light" data-post-id="{{ post.pk }}">
+                    <button class="dislike-button btn btn-outline-danger btn-sm" data-post-id="{{ post.pk }}">
                         <i class="fa fa-thumbs-down"></i> Dislike
                     </button>
                     <p class="mt-2">
                         <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
-                        <span class="text-danger">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
+                        <span class="text-danger ml-3">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
                     </p>
                 </div>
             </div>

@@ -49,7 +49,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context['is_update'] = True
         return context
 
-
 class PostListView(ListView):
     model = Post
     template_name = 'book/home.html'
