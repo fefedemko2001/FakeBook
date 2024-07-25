@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileRegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -10,13 +10,23 @@ def register(request):
     if request.method == 'POST':
         form = UserProfileRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            Profile.objects.create(
+                user=user,
+                age=form.cleaned_data['age'],
+                gender=form.cleaned_data['gender'],
+                location=form.cleaned_data['location'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                image=form.cleaned_data.get('image', 'default.jpg')
+            )
             username = form.cleaned_data.get('username')
             messages.success(request, f'Your account has been created! You are now able to log in')
             return redirect('login')
     else:
         form = UserProfileRegisterForm()
     return render(request, 'users/register.html', {'form': form})
+
 
 @login_required
 def profile(request):
@@ -42,15 +52,17 @@ def profile(request):
 
 @login_required
 def send_friend_request(request, userID):
-    from_user_profile = Profile.objects.get(user=request.user)
-    to_user_profile = Profile.objects.get(id=userID)
-    friend_request, created = Friend_Request.objects.get_or_create(
-        from_user=from_user_profile, to_user=to_user_profile)
-    if created:
-        messages.success(request, 'Friend request sent')
+    to_user_profile = get_object_or_404(Profile, id=userID)
+    from_user_profile = request.user.profile
+
+    if to_user_profile != from_user_profile:
+        from_user_profile.friends.add(to_user_profile)
+        to_user_profile.friends.add(from_user_profile)
+        messages.success(request, f'Friend request sent to {to_user_profile.user.username}')
     else:
-        messages.info(request, 'Friend request was already sent')
-    return redirect('book-home')
+        messages.error(request, "You cannot send a friend request to yourself")
+
+    return redirect('profile')
 
 @login_required
 def accept_friend_request(request, requestID):

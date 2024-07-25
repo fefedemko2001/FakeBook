@@ -45,13 +45,22 @@ class UserProfileRegisterForm(UserCreationForm):
         
         if commit:
             user.save()
-            profile = Profile(
+            profile, created = Profile.objects.get_or_create(
                 user=user,
-                age=self.cleaned_data['age'],
-                gender=self.cleaned_data['gender'],
-                location=self.cleaned_data['location'],
-                image=self.cleaned_data['image'] if 'image' in self.cleaned_data else 'default.jpg'
+                defaults={
+                    'age': self.cleaned_data['age'],
+                    'gender': self.cleaned_data['gender'],
+                    'location': self.cleaned_data['location'],
+                    'image': self.cleaned_data['image'] if 'image' in self.cleaned_data else 'default.jpg'
+                }
             )
-            profile.save()
+            if not created:
+                # Ha már létezik a profil, frissítse az adatokat
+                profile.age = self.cleaned_data['age']
+                profile.gender = self.cleaned_data['gender']
+                profile.location = self.cleaned_data['location']
+                if 'image' in self.cleaned_data:
+                    profile.image = self.cleaned_data['image']
+                profile.save()
         
         return user

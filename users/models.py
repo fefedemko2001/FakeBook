@@ -10,13 +10,13 @@ class Profile(models.Model):
     location = models.CharField(max_length=100, null=True, blank=True)
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
-    friends = models.ManyToManyField("Profile", blank=True)
+    friends = models.ManyToManyField("self", blank=True)
 
     def __str__(self):
-        return self.last_name + ' ' + self.first_name
+        return f'{self.user.last_name} {self.user.first_name}'
 
     def save(self, *args, **kwargs):
-        super(Profile, self).save(*args, **kwargs)  # Call the parent class's save() method
+        super(Profile, self).save(*args, **kwargs)
 
         img = Image.open(self.image.path)
 
@@ -24,6 +24,8 @@ class Profile(models.Model):
             output_size = (750, 750)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+
 
 class Friend_Request(models.Model):
     from_user = models.ForeignKey(

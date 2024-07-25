@@ -68,13 +68,23 @@ class UserPostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_profile'] = self.user.profile
+        user_profile = self.user.profile
+        request_user_profile = self.request.user.profile
 
-        if self.request.user.is_authenticated:
-            context['received_requests'] = Friend_Request.objects.filter(to_user=self.user.profile).all()
-        else:
-            context['received_requests'] = []
+        # Barátok listájának ellenőrzése
+        are_friends = user_profile in request_user_profile.friends.all()
 
+        # Barátkérések ellenőrzése
+        has_sent_request = Friend_Request.objects.filter(from_user=request_user_profile, to_user=user_profile).exists()
+        has_received_request = Friend_Request.objects.filter(from_user=user_profile, to_user=request_user_profile).exists()
+
+        context.update({
+            'user_profile': user_profile,
+            'received_requests': Friend_Request.objects.filter(to_user=request_user_profile),
+            'are_friends': are_friends,
+            'has_sent_request': has_sent_request,
+            'has_received_request': has_received_request,
+        })
         return context
 
 
