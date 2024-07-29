@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'book.apps.BookConfig',
+    'friends.apps.FriendsConfig',
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.admin',

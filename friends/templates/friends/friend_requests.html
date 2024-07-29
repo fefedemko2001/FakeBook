@@ -1,0 +1,14 @@
+{% extends "book/base.html" %}
+
+{% block content %}
+<h2>Friend Requests</h2>
+<ul>
+    {% for request in received_requests %}
+    <li>
+        {{ request.from_user.username }}
+        <a href="{% url 'accept_friend_request' request.id %}">Accept</a>
+        <a href="{% url 'reject_friend_request' request.id %}">Reject</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
