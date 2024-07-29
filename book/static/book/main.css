@@ -28,6 +28,27 @@ ul {
   font-weight: 500;
 }
 
+.nav-item {
+  display: flex; 
+  align-items: center; 
+  padding: 0 10px; 
+}
+
+.nav-item img {
+  border-radius: 50%; 
+  margin-right: 8px; 
+  width: 30px; 
+  height: 30px;
+  object-fit: cover; 
+  vertical-align: middle; 
+}
+
+.nav-item span {
+  display: inline-flex; 
+  align-items: center; 
+}
+
+
 .content-section {
   background: #ffffff;
   padding: 10px 20px;
@@ -91,14 +112,6 @@ a.article-title:hover {
   margin-left: auto;
 }
 
-.nav-item .bi {
-  color: white; 
-  font-size: 1.25rem; 
-}
-
-.nav-item img {
-  vertical-align: middle; 
-}
 
 .user-profile {
   text-align: center;
@@ -168,4 +181,106 @@ a.article-title:hover {
 .animation-container.h1-show h1 {
   opacity: 1;
   transform: translateY(0);
+}
+
+
+.form-filter {
+  margin-bottom: 1.5rem; 
+}
+
+.form-filter .form-group {
+  margin-bottom: 1rem; 
+}
+
+.form-filter .form-label {
+  margin-bottom: .5rem; 
+}
+
+.form-filter .form-select,
+.form-filter .form-control {
+  border-radius: .375rem; 
+}
+
+.form-filter .btn-primary {
+  margin-top: .75rem; 
+}
+
+.user-list {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0;
+  margin: 0;
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.user-list-item img {
+  border-radius: 50%; 
+  margin-right: 1rem; 
+}
+
+.user-list-item .user-info {
+  flex-grow: 1;
+}
+
+.user-list-item .user-info h5 {
+  margin-bottom: .5rem; 
+}
+
+.user-list-item .user-info a {
+  text-decoration: none;
+  color: #343a40; 
+}
+
+.user-list-item .user-info p {
+  margin-bottom: .5rem; 
+  color: #6c757d; 
+}
+
+.user-list-item .badge {
+  margin-right: .5rem; 
+}
+
+.user-list-item .btn-sm {
+  font-size: .875rem; 
+  padding: .25rem .5rem; 
+}
+
+.friend-request-actions {
+  margin: 1em 0;
+}
+
+.action-btn {
+  padding: 0.5em 1.5em;
+  font-size: 1em;
+  border-radius: 5px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.action-btn:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn.btn-success {
+  background-color: #28a745;
+  border: none;
+  color: #fff;
+}
+
+.action-btn.btn-success:hover {
+  background-color: #218838;
+}
+
+.action-btn.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  color: #fff;
+}
+
+.action-btn.btn-danger:hover {
+  background-color: #c82333;
 }

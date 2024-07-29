@@ -17,13 +17,11 @@ class FriendRequest(models.Model):
     from_user = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
     to_user = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)  # Barátkérés aktív vagy visszavont
-
+    is_active = models.BooleanField(default=True)  
     def accept(self):
         self.is_active = False
         self.save()
         
-        # Check if the friendship already exists
         if not Friendship.objects.filter(user1=self.from_user, user2=self.to_user).exists() and \
            not Friendship.objects.filter(user1=self.to_user, user2=self.from_user).exists():
             Friendship.objects.create(user1=self.from_user, user2=self.to_user)
