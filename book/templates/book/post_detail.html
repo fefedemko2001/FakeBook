@@ -1,4 +1,5 @@
 {% extends "book/base.html" %}
+
 {% block content %}
     <article class="media content-section">
         <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
@@ -24,17 +25,41 @@
                 {% endfor %}
             </div>
             <div class="reaction-buttons">
-                <button class="like-button btn btn-light" data-post-id="{{ post.pk }}">
+                <button class="like-button btn btn-outline-primary btn-sm" data-post-id="{{ post.pk }}">
                     <i class="fa fa-thumbs-up"></i> Like
                 </button>
-                <button class="dislike-button btn btn-light" data-post-id="{{ post.pk }}">
+                <button class="dislike-button btn btn-outline-danger btn-sm" data-post-id="{{ post.pk }}">
                     <i class="fa fa-thumbs-down"></i> Dislike
                 </button>
                 <p class="mt-2">
                     <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
-                    <span class="text-danger">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
+                    <span class="text-danger ml-3">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
                 </p>
+            </div>
+            
+            <div id="comments-{{ post.pk }}" class="comment-section">
+                {% for comment in post.comments.all %}
+                    <div class="comment">
+                        <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }}" class="comment-author-img">
+                        <div class="comment-body">
+                            <div class="comment-author">{{ comment.author.username }}</div>
+                            <div class="comment-meta">{{ comment.date_posted|date:"Y. E d., G:i" }}</div>
+                            <div class="comment-content">{{ comment.content }}</div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No comments yet.</p>
+                {% endfor %}
+                {% if user.is_authenticated %}
+                      <form class="comment-form" method="POST" action="{% url 'add-comment' post.pk %}">
+                          {% csrf_token %}
+                          <textarea name="content" placeholder="Add a comment..."></textarea>
+                          <button type="submit" class="comment-button btn btn-outline-secondary btn-sm">
+                           <i class="fa fa-comments"></i> Send Comment
+                          </button>
+                      </form>
+                  {% endif %}
             </div>
         </div>
     </article>
-{% endblock content %}
+{% endblock %}

@@ -7,8 +7,9 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-from .models import Post, Image
+from .models import Post, Image, Comment
 from friends.models import FriendRequest, Friendship
+from .forms import CommentForm
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -142,3 +143,18 @@ def dislike_post(request, pk):
             post.likes.remove(request.user)
         post.dislikes.add(request.user)
     return JsonResponse({'likes': post.total_likes(), 'dislikes': post.total_dislikes()})
+
+@login_required
+def add_comment_to_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            return redirect('post-detail', pk=post.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'book/add_comment_to_post.html', {'form': form})
