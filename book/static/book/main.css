@@ -284,3 +284,39 @@ a.article-title:hover {
 .action-btn.btn-danger:hover {
   background-color: #c82333;
 }
+
+.about-section {
+  padding: 40px;
+  margin: 0;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  width: 100%;
+}
+
+.about-section:nth-child(even) {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.about-section:nth-child(odd) {
+  background-color: #1877F2;
+  color: #ffffff;
+}
+
+.about-section p, .about-section h2, .about-section ul, .about-section li {
+  font-size: 1.5rem; 
+}
+
+.about-section .icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2.5rem; 
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.about-section:hover .icon {
+  opacity: 1;
+}

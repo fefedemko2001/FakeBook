@@ -45,7 +45,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # A kapcsolódó képek hozzáadása a sablon kontextusához
         context['images'] = self.object.post_images.all()
         context['is_update'] = True
         return context
