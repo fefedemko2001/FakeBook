@@ -1,0 +1,22 @@
+{% extends "book/base.html" %}
+{% block content %}
+    
+    <body>
+        <h1>{{ user_profile.user.username }}'s Detail Page</h1>
+        <h2>Friend: {{ friend_profile.user.username }}</h2>
+
+        {% for chat in chats %}
+            {% if chat.sender == user_profile and chat.receiver == friend_profile%}
+                <h3> {{chat}} </h3>
+            {% endif %}
+
+
+        {% endfor %}
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit">Send</submit>
+        </form>
+    </body>
+{% endblock content %}

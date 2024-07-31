@@ -1,7 +1,9 @@
 from datetime import date
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from PIL import Image
+from friends.models import Friendship
 
 class Profile(models.Model):
     GENDER_CHOICES = [
@@ -31,3 +33,15 @@ class Profile(models.Model):
             output_size = (750, 750)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+    def get_friends(self):
+        friendships = Friendship.objects.filter(Q(user1=self) | Q(user2=self))
+        friends = []
+        for friendship in friendships:
+            if friendship.user1 == self:
+                friends.append(friendship.user2)
+            else:
+                friends.append(friendship.user1)
+        return friends
+
+    User.add_to_class('get_friends', get_friends)

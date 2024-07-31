@@ -1,11 +1,13 @@
 body {
-  background: #fafafa;
+  background: #ffffff;
   color: #333333;
-  margin: 0; 
+  margin: 0;
+  font-family: 'Biorhyme', sans-serif !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
+  font-family: 'Biorhyme', sans-serif !important;
 }
 
 ul {
@@ -344,6 +346,7 @@ a.article-title:hover {
 .comment-author {
   font-weight: bold;
   margin-bottom: 5px;
+  color: #333333;
 }
 
 .comment-content {

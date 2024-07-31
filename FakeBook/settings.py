@@ -32,9 +32,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
     'book.apps.BookConfig',
+    'chat.apps.ChatConfig',
     'friends.apps.FriendsConfig',
+    'users.apps.UsersConfig',
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.admin',

@@ -63,7 +63,7 @@
             </a>
             <div class="media-body">
                 <div class="article-metadata mb-2">
-                    <a class="mr-2 font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                    <a class="comment-author" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
                 </div>
                 <h2><a class="article-title text-primary" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
@@ -96,7 +96,7 @@
                         <div class="comment">
                             <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }}" class="comment-author-img">
                             <div class="comment-body">
-                                <div class="comment-author">{{ comment.author.username }}</div>
+                                <a class="comment-author" href="{% url 'user-posts' comment.author.username %}">{{ comment.author.username }}</a>
                                 <div class="comment-meta">{{ comment.date_posted|date:"Y. E d., G:i" }}</div>
                                 <div class="comment-content">{{ comment.content }}</div>
                             </div>

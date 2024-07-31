@@ -21,7 +21,6 @@ def accept_friend_request(request, request_id):
     if friend_request.to_user == request.user:
         friend_request.accept()
         Friendship.objects.get_or_create(user1=friend_request.from_user, user2=friend_request.to_user)
-        Friendship.objects.get_or_create(user1=friend_request.to_user, user2=friend_request.from_user)
         friend_request.delete()
 
     return redirect('user-posts', username=friend_request.from_user.username)
