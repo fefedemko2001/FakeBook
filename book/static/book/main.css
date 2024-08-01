@@ -1,8 +1,37 @@
+/* Reszponzív beállítások */
+@media (max-width: 768px) {
+  body {
+    font-size: 1rem;
+  }
+
+  .nav-item {
+    display: block; 
+    padding: 10px 0; 
+  }
+  
+  .account-heading {
+    font-size: 1.5rem;
+  }
+
+  .account-img,
+  .profile-img,
+  .article-img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+  }
+
+  .user-details .col-md-4 {
+    flex: 1 1 100%;
+  }
+}
+
 body {
   background: #ffffff;
   color: #333333;
   margin: 0;
   font-family: 'Biorhyme', sans-serif !important;
+  font-size: larger;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -402,3 +431,35 @@ a.article-title:hover {
   background-color: #5a6268; 
 }
 
+.chat-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.message {
+  padding: 10px 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.message-sent {
+  background-color: #dcf8c6;
+  align-self: flex-end;
+  text-align: right;
+  margin-left: auto;
+}
+
+.message-received {
+  background-color: #fff;
+  align-self: flex-start;
+  text-align: left;
+  margin-right: auto;
+}
+
+.message-form {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}

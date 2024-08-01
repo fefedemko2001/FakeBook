@@ -2,21 +2,65 @@
 {% block content %}
     
     <body>
-        <h1>{{ user_profile.user.username }}'s Detail Page</h1>
-        <h2>Friend: {{ friend_profile.user.username }}</h2>
+        <h2>Chat with: {{ friend_profile.user.username }}</h2>
 
-        {% for chat in chats %}
-            {% if chat.sender == user_profile and chat.receiver == friend_profile%}
-                <h3> {{chat}} </h3>
-            {% endif %}
+        <div class="chat-container" id="chat-container">
+            {% for chat in chats %}
+                {% if chat.sender == user_profile and chat.receiver == friend_profile %}
+                    <div class="message-sent">
+                        <h3>{{ chat }}</h3>
+                    </div>
+                {% elif chat.sender == friend_profile and chat.receiver == user_profile %}
+                    <div class="message-received">
+                        <h3>{{ chat }}</h3>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
 
-
-        {% endfor %}
-
-        <form action="" method="POST">
+        <form action=""  id="chat_form" method="POST" class="message-form">
             {% csrf_token %}
             {{ form }}
-            <button type="submit">Send</submit>
+            <button type="submit">Send</button>
         </form>
     </body>
+
+
+    <script>
+        let form = document.getElementById("chat_form")
+
+        form.addEventListener("submit", sendChat)
+
+        function sendChat(e){
+            e.preventDefault()
+            let chatMessage = document.getElementById("id_body").value
+            console.log(chatMessage)
+            
+            const data = {msg : chatMessage};
+
+            let url = "{% url 'sent_msg' friend_profile.user.username%}"
+
+            fetch(url, {
+                method: 'Post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': "{{ csrf_token }}"
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(date => {
+                console.log('Success:', data);
+                let chat_body = document.getElementById("chat-container")
+                let chat_message_box = document.createElement("div")
+                chat_message_box.classList.add("message-sent")
+                chat_message_box.innerText = data.msg
+                chat_body.append(chat_message_box)
+                document.getElementById("id_body").value = ""
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 {% endblock content %}
