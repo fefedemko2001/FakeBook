@@ -6,7 +6,29 @@
     {% for friend in friends %}
       <li>
         <a href="{% url 'detail' friend.username %}">{{ friend.username }}</a>
+        <div class="notification">0</div>
       </li>
     {% endfor %}
   </ul>
+
+  <script>
+
+    setInterval(getNotification, 5000)
+
+    function getNotification(){
+      let url = "{% url 'notification' %}"
+
+      fetch(url)
+      .then(res => res.json())
+      .then(data =>{
+        console.log(data)
+        let chatNotificiation = document.getElementsByClassName("notification")
+        for(let i = 0; i < data.length; i++){
+          chatNotificiation[i].innerText = data[i]
+        }
+      })
+      .catch(error => console.log(error))
+    }
+
+  </script>
 {% endblock content %}

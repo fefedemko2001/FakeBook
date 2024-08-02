@@ -49,12 +49,12 @@
                 body: JSON.stringify(data),
             })
             .then(response => response.json())
-            .then(date => {
+            .then(data => {
                 console.log('Success:', data);
                 let chat_body = document.getElementById("chat-container")
                 let chat_message_box = document.createElement("div")
                 chat_message_box.classList.add("message-sent")
-                chat_message_box.innerText = data.msg
+                chat_message_box.innerText = data
                 chat_body.append(chat_message_box)
                 document.getElementById("id_body").value = ""
             })
@@ -62,5 +62,37 @@
                 console.error('Error:', error);
             });
         }
+
+        setInterval(receiveChat, 10000)
+
+        let counter = {{cnt}}
+
+        function receiveChat(){
+            let url = "{% url 'recv_msg' friend_profile.user.username%}"
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if(data.length != 0){
+                    let lastMsg = data[data.length-1]
+                    if(counter == data.length){console.log("there is nor new msg")}
+                    else{
+                        let chat_body = document.getElementById("chat-container")
+                        let chat_message_box = document.createElement("div")
+                        chat_message_box.classList.add("message-received")
+                        chat_message_box.innerText = lastMsg
+                        chat_body.append(chat_message_box)
+                        document.getElementById("id_body").value = ""
+                    }
+                }
+                counter = data.length
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+
     </script>
 {% endblock content %}
