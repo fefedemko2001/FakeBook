@@ -48,6 +48,9 @@
                         <a class="nav-item nav-link" href="{% url 'find_friends' %}">
                             <i class="bi bi-search"></i> Find Friends
                         </a>
+                        <a class="nav-item nav-link" href="{% url 'chat' %}">
+                            <i class="bi bi-chat-dots"></i> Chats
+                        </a>
                     </div>
                     <div class="navbar-nav align-items-center">
                         {% if user.is_authenticated %}
