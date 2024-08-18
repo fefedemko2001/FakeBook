@@ -13,7 +13,7 @@ def send_friend_request(request, user_id):
         if not Friendship.objects.filter(user1=request.user, user2=user).exists() and not Friendship.objects.filter(user1=user, user2=request.user).exists():
             FriendRequest.objects.create(from_user=request.user, to_user=user)
 
-    return redirect('user-posts', username=user.username)
+    return redirect('find_friends')
 
 @login_required
 def accept_friend_request(request, request_id):

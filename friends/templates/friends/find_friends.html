@@ -26,11 +26,11 @@
         <a href="{% url 'friend_requests' %}" class="btn btn-secondary">View Friend Requests</a>
     </div>
 
-    <ul class="list-group">
+    <ul class="list-unstyled">
         {% for user in users %}
-        <li class="list-group-item d-flex align-items-center">
-            <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-3" width="50" height="50">
-            <div class="flex-grow-1">
+        <li class="media mb-3">
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-3 profile-img-small" width="50" height="50">
+            <div class="media-body">
                 <h5 class="mb-1">
                     <a href="{% url 'user-posts' user.username %}" class="text-decoration-none text-dark">
                         {{ user.first_name }} {{ user.last_name }}
@@ -50,11 +50,11 @@
                             {% if request.from_user_id == user.id %}
                                 <form method="POST" action="{% url 'accept_friend_request' request.request_id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-success btn-sm">Accept Friend Request</button>
+                                    <button type="submit" class="btn btn-success btn-sm">Accept</button>
                                 </form>
                                 <form method="POST" action="{% url 'reject_friend_request' request.request_id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm">Reject Friend Request</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
                                 </form>
                                 {% with found_request=True %}{% endwith %}
                             {% endif %}
@@ -63,7 +63,7 @@
                             <form method="POST" action="{% url 'send_friend_request' user.id %}" class="d-inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="to_user" value="{{ user.id }}">
-                                <button type="submit" class="btn btn-primary btn-sm">Send Friend Request</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Send Request</button>
                             </form>
                         {% endif %}
                     {% endwith %}
@@ -71,7 +71,8 @@
             </div>
         </li>
         {% empty %}
-            <li class="list-group-item">No users found.</li>
+        <li class="p-3">No users found.</li>
         {% endfor %}
     </ul>
+    
 {% endblock %}

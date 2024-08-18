@@ -6,7 +6,8 @@
       <a href="{% url 'detail' friend.username %}" class="list-group-item list-group-item-action d-flex align-items-center">
           <img class="mr-3 rounded-circle" src="{{ friend.profile.image.url }}" alt="{{ friend.username }}" width="60" height="60">
           <div class="ms-3">
-              <h5 class="mb-1">{{ friend.username }}</h5>
+              <h5 class="mt-0 mb-1">{{ friend.first_name }} {{ friend.last_name }}</h5>
+              <small>{{ friend.username }}</small>
               <div class="notification badge bg-primary text-white">0</div>
           </div>
       </a>

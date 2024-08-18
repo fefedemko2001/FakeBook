@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="user-profile text-center mb-4">
-        <img class="rounded-circle profile-img mb-3" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}" width="150" height="150">
+        <img class="rounded-circle profile-img-large mb-3" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}" width="150" height="150">
         <h2 class="font-weight-bold">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h2>
         <p>
             <i class="fas fa-envelope"></i> Email: {{ user_profile.user.email }}<br>
@@ -42,18 +42,20 @@
     <ul class="list-unstyled">
         {% for friend in friends %}
             <li class="media mb-3">
-                <a href="{% url 'user-posts' username=friend.username %}" class="d-flex align-items-center">
-                    <img class="mr-3 rounded-circle" src="{{ friend.profile.image.url }}" alt="{{ friend.username }}" width="60" height="60">
+                <a href="{% url 'user-posts' username=friend.username %}" class="d-flex align-items-center text-decoration-none text-dark">
+                    <img class="rounded-circle article-img mr-3" src="{{ friend.profile.image.url }}" alt="{{ friend.username }}">
                     <div class="media-body">
                         <h5 class="mt-0 mb-1">{{ friend.first_name }} {{ friend.last_name }}</h5>
-                        {{ friend.username }}
+                        <small>{{ friend.username }}</small>
                     </div>
                 </a>
             </li>
         {% empty %}
-            <li>No friends yet.</li>
+            <li class="p-3">No friends yet.</li>
         {% endfor %}
     </ul>
+    
+    
 
     <hr>
     {% for post in posts %}
@@ -66,7 +68,7 @@
                     <a class="comment-author" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
                 </div>
-                <h2><a class="article-title text-primary" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                <h4><p class="article-title" >{{ post.title }}</p></h4>
                 <p class="article-content">{{ post.content }}</p>
                 <div class="post-images mb-2 text-center">
                     {% for image in post.post_images.all %}

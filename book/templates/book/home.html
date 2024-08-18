@@ -10,7 +10,7 @@
                   <a class="comment-author" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
                   <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
                </div>
-               <h2><a class="article-title text-primary" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+               <h4><p class="article-title" >{{ post.title }}</p></h4>
                <p class="article-content">{{ post.content }}</p>
                <div class="post-images mb-2 text-center">
                   {% for image in post.post_images.all %}

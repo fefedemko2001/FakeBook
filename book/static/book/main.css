@@ -1,11 +1,29 @@
-@media (max-width: 768px) {
-  body {
-    font-size: 1rem;
+@media (max-width: 1200px) {
+  .navbar-nav .nav-link span {
+      display: none; 
   }
 
-  .nav-item {
-    display: block; 
-    padding: 10px 0; 
+  .navbar-nav .nav-link i {
+      margin-right: 0; 
+  }
+}
+
+@media (max-width: 1400px) {
+  .navbar-nav {
+    flex-wrap: nowrap; 
+    overflow-x: auto; 
+  }
+
+  .navbar-nav .nav-item {
+    flex: 1; 
+  }
+
+}
+
+
+@media (max-width: 768px) {
+  .body {
+    font-size: 0.5rem;
   }
   
   .account-heading {
@@ -58,10 +76,21 @@ ul {
   font-weight: 500;
 }
 
+.nav-link i {
+  margin-right: 8px; 
+}
+
+.navbar-nav {
+  text-align: center;
+  display: inline-block;
+  margin-right: 8px; 
+}
+
 .nav-item {
   display: flex; 
   align-items: center; 
   padding: 0 10px; 
+  display: inline-block;
 }
 
 .nav-item img {
@@ -88,7 +117,7 @@ ul {
 }
 
 .article-title {
-  color: #444444;
+  color: #444444 !important;
 }
 
 a.article-title:hover {
@@ -183,7 +212,7 @@ a.article-title:hover {
 }
 
 
-.profile-img {
+.profile-img-large {
   width: 150px;
   height: 150px;
   border-radius: 50%;
@@ -325,15 +354,18 @@ a.article-title:hover {
 .about-section:nth-child(even) {
   background-color: #ffffff;
   color: #000000;
+  margin: 5px;
 }
 
 .about-section:nth-child(odd) {
   background-color: #1877F2;
-  color: #ffffff;
+  color: #ffffff !important;
+  margin: 5px;
 }
 
 .about-section p, .about-section h2, .about-section ul, .about-section li {
   font-size: 1.5rem; 
+  margin: 5px;
 }
 
 .about-section .icon {
@@ -574,9 +606,63 @@ body{
     padding: .65rem 1rem;
     position: relative;
     font-weight: 600;
-    color: #ffffff;
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
 }
 
 .content{
     margin-top:40px;    
+}
+
+.list-group-item {
+  position: relative;
+}
+
+.notification {
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #ff5733 !important;
+  padding: 0.5em 0.75em;
+  border-radius: 12px;
+}
+
+.profile-img-small {
+  border: 2px solid #ffffff; 
+  object-fit: cover; 
+  width: 40px; 
+  height: 40px;
+  border-radius: 10px; 
+}
+
+.media {
+  background-color: #f8f9fa; 
+  transition: background-color 0.3s ease; 
+  border-radius: 0.25rem; 
+  padding: 10px; 
+}
+
+.media:hover {
+  background-color: #e9ecef; 
+}
+
+.media a {
+  color: #333; 
+  text-decoration: none; 
+}
+
+.media a:hover {
+  text-decoration: underline; 
+}
+
+.media-body h5 {
+  font-size: 1rem; 
+  margin-bottom: 0.5rem; 
+}
+
+.media-body small {
+  font-size: 0.75rem; 
+  color: #6c757d; 
 }

@@ -19,7 +19,6 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']  
 
-
 class ProfileUpdateForm(forms.ModelForm):
     gender = forms.ChoiceField(choices=Profile.GENDER_CHOICES, required=True, label='Gender')
     location = forms.CharField(max_length=30, required=False)
@@ -27,4 +26,4 @@ class ProfileUpdateForm(forms.ModelForm):
     
     class Meta:
         model = Profile
-        fields = ['image',  'gender', 'location', 'birthdate']  
+        fields = ['image', 'gender', 'location', 'birthdate']
