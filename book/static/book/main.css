@@ -199,17 +199,19 @@ a.article-title:hover {
 
 
 .post-images {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
+  gap: 10px;
 }
 
 .post-image {
-  max-width: 100%;
-  height: auto;
-  max-height: 500px; 
-  margin: 0 auto; 
+  width: 100%; 
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 
 .profile-img-large {
