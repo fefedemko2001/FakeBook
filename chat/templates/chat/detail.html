@@ -1,0 +1,127 @@
+{% extends "book/base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card chat-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'chat' %}" class="text-decoration-none me-3">
+                            <i class="bi bi-arrow-left text-white"></i>
+                        </a>
+                        <h5 class="m-0 text-white">Chat with: {{ friend_profile.user.username }}</h5>
+                    </div>
+                </div>
+                <div class="card-body chat-container d-flex flex-column" id="chat-container" style="height: 500px; overflow-y: auto;">
+                    {% for chat in chats %}
+                        {% if chat.sender == user_profile and chat.receiver == friend_profile %}
+                            <div class="d-flex justify-content-end mb-3 w-100">
+                                <div class="message-sent " style="max-width: 60%;">
+                                    <h6 class="m-0">{{ chat.body }}</h6>
+                                </div>
+                                <img class="ms-3 rounded-circle" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}" width="40" height="40">
+                            </div>
+                        {% elif chat.sender == friend_profile and chat.receiver == user_profile %}
+                            <div class="d-flex justify-content-start mb-3 w-100">
+                                <img class="me-3 rounded-circle" src="{{ friend_profile.image.url }}" alt="{{ friend_profile.user.username }}" width="40" height="40">
+                                <div class="message-received " style="max-width: 60%;">
+                                    <h6 class="m-0 text-dark">{{ chat.body }}</h6>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="" id="chat_form" method="POST" class="message-form d-flex align-items-center mt-3">
+        {% csrf_token %}
+        <input type="text" id="id_body" name="body" class="form-control me-2" placeholder="Type your message here..." autocomplete="off" style="flex: 1;">
+        <button type="submit" class="btn btn-primary px-4">Send</button>
+    </form>
+</div>
+
+<script>
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    let form = document.getElementById("chat_form");
+
+    form.addEventListener("submit", sendChat);
+
+    function sendChat(e) {
+        e.preventDefault();
+        let chatMessage = document.getElementById("id_body").value;
+
+        const data = {msg: chatMessage};
+
+        let url = "{% url 'sent_msg' friend_profile.user.username %}";
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': "{{ csrf_token }}"
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            let chat_message_box = document.createElement("div");
+            chat_message_box.classList.add("d-flex", "justify-content-end", "mb-3", "w-100");
+            chat_message_box.innerHTML = `
+                <div class="d-flex justify-content-end mb-3 w-100">
+                <div class="message-sent " style="max-width: 60%;">
+                    <h6 class="m-0">${data}</h6>
+                </div>
+                <img class="ms-3 rounded-circle" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}" width="40" height="40">
+            </div>
+            `;
+            chatContainer.append(chat_message_box);
+            document.getElementById("id_body").value = "";
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Automatikus görgetés az új üzenethez
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    setInterval(receiveChat, 1000);
+
+    let counter = {{ cnt }};
+
+    function receiveChat() {
+        let url = "{% url 'recv_msg' friend_profile.user.username %}";
+
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if(data.length != 0) {
+                let lastMsg = data[data.length-1];
+                if(counter == data.length) {
+                    console.log("There is no new message");
+                } else {
+                    let chat_message_box = document.createElement("div");
+                    chat_message_box.classList.add("d-flex", "justify-content-start", "mb-3", "w-100");
+                    chat_message_box.innerHTML = `
+                    <div class="d-flex justify-content-start mb-3 w-100">
+                                <img class="me-3 rounded-circle" src="{{ friend_profile.image.url }}" alt="{{ friend_profile.user.username }}" width="40" height="40">
+                                <div class="message-received " style="max-width: 60%;">
+                                    <h6 class="m-0 text-dark">${ lastMsg }</h6>
+                                </div>
+                            </div>
+                `;
+                    chatContainer.append(chat_message_box);
+                    chatContainer.scrollTop = chatContainer.scrollHeight; // Automatikus görgetés az új üzenethez
+                }
+            }
+            counter = data.length;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock content %}

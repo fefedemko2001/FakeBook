@@ -1,47 +1,122 @@
 {% extends "book/base.html" %}
+
 {% block content %}
     <div class="user-profile text-center mb-4">
-        <img class="rounded-circle profile-img" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }} profile picture">
-        <h2>{{ user_profile.user.username }}</h2>
-        <p>Email: {{ user_profile.user.email }}</p>
-        <p>Age: {{ user_profile.age }}</p>
-        <p>Gender: {{ user_profile.gender }}</p>
-        <p>Location: {{ user_profile.location }}</p>
+        <img class="rounded-circle profile-img-large mb-3" src="{{ user_profile.image.url }}" alt="{{ user_profile.user.username }}" width="150" height="150">
+        <h2 class="font-weight-bold">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h2>
+        <p>
+            <i class="fas fa-envelope"></i> Email: {{ user_profile.user.email }}<br>
+            <i class="fas fa-birthday-cake"></i> Age: {{ user_profile.age }}<br>
+            <i class="fas fa-venus-mars"></i> Gender: {{ user_profile.gender }}<br>
+            <i class="fas fa-map-marker-alt"></i> Location: {{ user_profile.location }}
+        </p>
+
+        {% if request.user != user_profile.user %}
+            {% if is_friend %}
+                <p>Already Friends</p>
+            {% elif request_sent %}
+                <p>Friend Request Sent</p>
+            {% elif request_received %}
+                <div class="friend-request-actions text-center mb-4">
+                    <form method="POST" action="{% url 'accept_friend_request' request_received.id %}" class="d-inline-block">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success action-btn">Accept Friend Request</button>
+                    </form>
+                    <form method="POST" action="{% url 'reject_friend_request' request_received.id %}" class="d-inline-block ml-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger action-btn">Reject Friend Request</button>
+                    </form>
+                </div>
+            {% else %}
+                <form method="POST" action="{% url 'send_friend_request' user_profile.user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="to_user" value="{{ user_profile.user.id }}">
+                    <button type="submit" class="btn btn-primary">Send Friend Request</button>
+                </form>
+            {% endif %}
+        {% endif %}
     </div>
+
+    <hr>
+    <h3>Friends</h3>
+    <ul class="list-unstyled">
+        {% for friend in friends %}
+            <li class="media mb-3">
+                <a href="{% url 'user-posts' username=friend.username %}" class="d-flex align-items-center text-decoration-none text-dark">
+                    <img class="rounded-circle article-img mr-3" src="{{ friend.profile.image.url }}" alt="{{ friend.username }}">
+                    <div class="media-body">
+                        <h5 class="mt-0 mb-1">{{ friend.first_name }} {{ friend.last_name }}</h5>
+                        <small>{{ friend.username }}</small>
+                    </div>
+                </a>
+            </li>
+        {% empty %}
+            <li class="p-3">No friends yet.</li>
+        {% endfor %}
+    </ul>
+    
+    
+
     <hr>
     {% for post in posts %}
-        <article class="media content-section">
+        <article class="media content-section p-3 mb-3 border rounded shadow-sm">
             <a href="{% url 'post-detail' post.id %}">
-                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+                <img class="rounded-circle article-img mr-3" src="{{ post.author.profile.image.url }}" alt="{{ post.author }}" width="65" height="65">
             </a>
             <div class="media-body">
-                <div class="article-metadata">
-                    <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                <div class="article-metadata mb-2">
+                    <a class="comment-author" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted|date:"Y. E d., G:i" }}</small>
                 </div>
-                <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                <h4><p class="article-title" >{{ post.title }}</p></h4>
                 <p class="article-content">{{ post.content }}</p>
-                <div class="post-images">
+                <div class="post-images mb-2 text-center">
                     {% for image in post.post_images.all %}
-                        <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid">
-                        {% if image.description %}
-                            <p>{{ image.description }}</p>
-                        {% endif %}
+                        <div class="mb-2">
+                            <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-fluid rounded mb-1 post-image">
+                            {% if image.description %}
+                                <p class="text-muted">{{ image.description }}</p>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
                 <div class="reaction-buttons">
-                    <button class="like-button btn btn-light" data-post-id="{{ post.pk }}">
+                    <button class="like-button btn btn-outline-primary btn-sm" data-post-id="{{ post.pk }}">
                         <i class="fa fa-thumbs-up"></i> Like
                     </button>
-                    <button class="dislike-button btn btn-light" data-post-id="{{ post.pk }}">
+                    <button class="dislike-button btn btn-outline-danger btn-sm" data-post-id="{{ post.pk }}">
                         <i class="fa fa-thumbs-down"></i> Dislike
                     </button>
                     <p class="mt-2">
                         <span class="text-primary">Likes: <span id="likes-{{ post.pk }}"> {{ post.total_likes }} </span></span>
-                        <span class="text-danger">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
+                        <span class="text-danger ml-3">Dislikes: <span id="dislikes-{{ post.pk }}">{{ post.total_dislikes }}</span></span>
                     </p>
                 </div>
+                
+                <div id="comments-{{ post.pk }}" class="comment-section">
+                    {% for comment in post.comments.all %}
+                        <div class="comment">
+                            <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }}" class="comment-author-img">
+                            <div class="comment-body">
+                                <a class="comment-author" href="{% url 'user-posts' comment.author.username %}">{{ comment.author.username }}</a>
+                                <div class="comment-meta">{{ comment.date_posted|date:"Y. E d., G:i" }}</div>
+                                <div class="comment-content">{{ comment.content }}</div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No comments yet.</p>
+                    {% endfor %}
+                    {% if user.is_authenticated %}
+                      <form class="comment-form" method="POST" action="{% url 'add-comment' post.pk %}">
+                          {% csrf_token %}
+                          <textarea name="content" placeholder="Add a comment..."></textarea>
+                          <button type="submit" class="comment-button btn btn-outline-secondary btn-sm">
+                           <i class="fa fa-comments"></i> Send Comment
+                          </button>
+                      </form>
+                  {% endif %}
+                </div>                
             </div>
         </article>
     {% endfor %}
-{% endblock content %}
+{% endblock %}

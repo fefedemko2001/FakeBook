@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from PIL import Image as PilImage
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -16,6 +17,9 @@ class Post(models.Model):
 
     def total_dislikes(self):
         return self.dislikes.count()
+    
+    def total_comments(self):
+        return self.comments.count()
 
     def __str__(self):
         return self.title
@@ -30,3 +34,22 @@ class Image(models.Model):
 
     def __str__(self):
         return self.description or self.image.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        img = PilImage.open(self.image.path)  
+        max_size = (800, 800)  
+
+        if img.height > max_size[1] or img.width > max_size[0]:
+            img.thumbnail(max_size, PilImage.ANTIALIAS)  
+            img.save(self.image.path)
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.author.username} on {self.post.title}'

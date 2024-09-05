@@ -1,0 +1,78 @@
+{% extends 'book/base.html' %}
+{% block content %}
+    <h2>Find Friends</h2>
+
+    <form method="GET" class="mb-4">
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select name="gender" id="gender" class="form-control">
+                <option value="">-- Select --</option>
+                <option value="man" {% if request.GET.gender == 'man' %}selected{% endif %}>Man</option>
+                <option value="woman" {% if request.GET.gender == 'woman' %}selected{% endif %}>Woman</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="min_age">Min Age</label>
+            <input type="number" name="min_age" id="min_age" class="form-control" min="0" value="{{ request.GET.min_age }}">
+        </div>
+        <div class="form-group">
+            <label for="max_age">Max Age</label>
+            <input type="number" name="max_age" id="max_age" class="form-control" min="0" value="{{ request.GET.max_age }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+    
+    <div class="mb-4">
+        <a href="{% url 'friend_requests' %}" class="btn btn-secondary">View Friend Requests</a>
+    </div>
+
+    <ul class="list-unstyled">
+        {% for user in users %}
+        <li class="media mb-3">
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }}" class="rounded-circle me-3 profile-img-small" width="50" height="50">
+            <div class="media-body">
+                <h5 class="mb-1">
+                    <a href="{% url 'user-posts' user.username %}" class="text-decoration-none text-dark">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </a>
+                </h5>
+                <p class="mb-1 text-muted">{{ user.username }}</p>
+                <p class="mb-1">Age: {{ user.profile.age }}</p>
+            </div>
+            <div>
+                {% if user.id in friends_ids %}
+                    <span class="badge bg-success">Already friends</span>
+                {% elif user.id in sent_requests_ids %}
+                    <span class="badge bg-warning text-dark">Friend request sent</span>
+                {% else %}
+                    {% with found_request=False %}
+                        {% for request in received_requests_list %}
+                            {% if request.from_user_id == user.id %}
+                                <form method="POST" action="{% url 'accept_friend_request' request.request_id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                                </form>
+                                <form method="POST" action="{% url 'reject_friend_request' request.request_id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                                {% with found_request=True %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if not found_request %}
+                            <form method="POST" action="{% url 'send_friend_request' user.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="to_user" value="{{ user.id }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Send Request</button>
+                            </form>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </div>
+        </li>
+        {% empty %}
+        <li class="p-3">No users found.</li>
+        {% endfor %}
+    </ul>
+    
+{% endblock %}
