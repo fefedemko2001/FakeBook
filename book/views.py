@@ -121,28 +121,28 @@ def about(request):
     return render(request, 'book/about.html', {'title': 'about'})
 
 @login_required
-@require_POST
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-    else:
-        if request.user in post.dislikes.all():
-            post.dislikes.remove(request.user)
-        post.likes.add(request.user)
-    return JsonResponse({'likes': post.total_likes(), 'dislikes': post.total_dislikes()})
-
-@login_required
-@require_POST
-def dislike_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.user in post.dislikes.all():
-        post.dislikes.remove(request.user)
-    else:
+    if request.method == 'POST':
         if request.user in post.likes.all():
             post.likes.remove(request.user)
-        post.dislikes.add(request.user)
-    return JsonResponse({'likes': post.total_likes(), 'dislikes': post.total_dislikes()})
+        else:
+            if request.user in post.dislikes.all():
+                post.dislikes.remove(request.user)
+            post.likes.add(request.user)
+    return redirect('post-detail', pk=post.pk)
+
+@login_required
+def dislike_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        if request.user in post.dislikes.all():
+            post.dislikes.remove(request.user)
+        else:
+            if request.user in post.likes.all():
+                post.likes.remove(request.user)
+            post.dislikes.add(request.user)
+    return redirect('post-detail', pk=post.pk)
 
 @login_required
 def add_comment_to_post(request, pk):
@@ -158,3 +158,13 @@ def add_comment_to_post(request, pk):
     else:
         form = CommentForm()
     return render(request, 'book/add_comment_to_post.html', {'form': form})
+
+@login_required
+def delete_comment(request, post_pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk, post_id=post_pk)
+    if request.user == comment.author:
+        comment.delete()
+        return redirect('post-detail', pk=post_pk)
+    else:
+        return redirect('post-detail', pk=post_pk)  
+

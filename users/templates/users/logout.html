@@ -1,9 +1,7 @@
 {% extends "book/base.html" %}
 {% block content %}
     <h2>You have been logged out</h2>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            <a href="{% url 'login' %}">Log In Again</a>
-        </small>
-    </div>
+    <div class="alert alert-warning" role="alert">
+         <p class="mb-0"><a href="{% url 'login' %}" class="alert-link">Log in again</a></p>
+      </div>
 {% endblock content %}
