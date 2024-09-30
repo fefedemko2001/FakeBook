@@ -9,6 +9,7 @@ class Profile(models.Model):
     GENDER_CHOICES = [
         ('man', 'Man'),
         ('woman', 'Woman'),
+        ('other', 'Other')
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
